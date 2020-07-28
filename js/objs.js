@@ -114,11 +114,17 @@ class GameObject {
 			speed: obj.movingSpeed + this.movingSpeed
 		});
 		obj.health -= this.bodyDamage;
+		obj.damagedBy = this;
 		this.move({
 			dir: tdp.deg(tdp.dir(obj, this)),
 			speed: obj.movingSpeed + this.movingSpeed
 		});
 		this.health -= obj.bodyDamage;
+		this.damagedBy = obj;
+	}
+
+	dead() {
+		game.parti(this);
 	}
 
 	parupdate(time) {
@@ -399,8 +405,8 @@ class AiTank extends Tank {
 			var d = tdp.dis(this, o);
 
 			//dodge
-			if (this.dodge && o.team !== this.team && d > tdp.dis(this.future(1), o.future(1))) {
-				if (o.movingSpeed !== 0
+			if (this.dodge && o.team !== this.team) {
+				if (o.movingSpeed !== 0 && d > tdp.dis(this, o.future(time))
 					&& tdp.coil({x: this.x, y: this.y, r: this.r + o.r * 2}, o.line())
 					&& (d - this.r - o.r) / o.movingSpeed <= (this.r + o.r) * 2 / this.movementSpeed
 				) {
@@ -410,7 +416,7 @@ class AiTank extends Tank {
 					}
 					move.push(tdp.rad(o.movingDir + (i === 0 ? 1 : i / Math.abs(i)) * 90));
 				}
-				else if (this.movingSpeed !== 0
+				else if (this.movingSpeed !== 0 && d > tdp.dis(this.future(time), o)
 					&& tdp.coil({x: o.x, y: o.y, r: this.r + o.r * 2}, this.line())
 					&& d <= (this.r + o.r) * 2
 				) {
@@ -436,7 +442,7 @@ class AiTank extends Tank {
 
 		if (!this.dodge || move.length < 1 && this.movingSpeed === 0) {
 			if (this.chase && target) {
-				var i = td - (this.weapon.range / 2 * bs + target.r);
+				var i = td - (this.weapon.range / 2 / bs + target.r);
 				if (Math.abs(i) > this.r * 2) {
 					move.push(i > 0 ? tdp.dir(this, target) : tdp.dir(target, this));
 				}
@@ -490,6 +496,34 @@ class AiTank extends Tank {
 
 			// this.rotate -= i;
 			this.rotate = this.targetDir;
+		}
+	}
+
+}
+
+class WeaponBall extends GameObject {
+
+	constructor(x, y, type) {
+		super(x, y, 10, "white", "obstacle", 1, 0);
+		this.weaponType = type;
+
+		this.doRenderHealthBar = false;
+
+		this.display = new Tank(0, 0, 10 / 3, "white", "self", type);
+		this.display.particle = true;
+	}
+
+	render() {
+		super.render();
+		this.display.x = this.x;
+		this.display.y = this.y;
+		this.display.render();
+	}
+
+	dead() {
+		super.dead();
+		if (this.damagedBy instanceof Tank) {
+			this.damagedBy.weapon = new Weapon(this.damagedBy, this.weaponType);
 		}
 	}
 

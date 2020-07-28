@@ -6,7 +6,7 @@ class Weapon {
 		weapon.bulletSpeed = 1;
 		weapon.bulletDamage = 1;
 		weapon.bulletPenetration = 1;
-		weapon.range = 20;
+		weapon.range = 200;
 		weapon.mainComp = 0;
 		switch (type) {
 			case "singleCannon":
@@ -35,14 +35,14 @@ class Weapon {
 				weapon.mainComp = 4;
 				break;
 			case "sniperCannon":
-				weapon.comps.push(new Cannon(weapon.owner, 0, 0, 0.8, 2.5, 0, 0, 2, 1.5, 1.5, 15, 50));
+				weapon.comps.push(new Cannon(weapon.owner, 0, 0, 0.8, 2.5, 0, 0, 2, 1.5, 1.5, 15, 500));
 				weapon.reloadSpeed = 2;
 				weapon.bulletSpeed = 1.5;
 				weapon.bulletDamage = 1.5;
 				weapon.bulletPenetration = 10;
-				weapon.range = 50;
+				weapon.range = 500;
 				break;
-			case "DestroyerCannon":
+			case "destroyerCannon":
 				weapon.comps.push(new Cannon(weapon.owner, 0, 0, 1.9, 2, 0, 0, 2, 0.5, 5, 20));
 				weapon.reloadSpeed = 2;
 				weapon.bulletSpeed = 0.5;

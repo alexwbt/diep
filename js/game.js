@@ -70,11 +70,16 @@ var game = {
 
 		this.objs = [];
 		this.player = new Player(-100, 0, 10, "#0af", "player", "singleCannon"
-			// , 1000000, 100, 10, 5, 50, 100, 100
+			// , 1000000, 100, 100, 50, 150, 100, 100
 			);
 		this.add(this.player);
 
-		this.add(new GameObject(-150, 0, 10, "yellow"))
+		this.add(new WeaponBall(-150, -150, "singleCannon"));
+		this.add(new WeaponBall(-150, -120, "twinCannon"));
+		this.add(new WeaponBall(-150, -90, "tripleCannon"));
+		this.add(new WeaponBall(-150, -60, "pentaCannon"));
+		this.add(new WeaponBall(-150, -30, "sniperCannon"));
+		this.add(new WeaponBall(-150, 0, "destroyerCannon"));
 
 		this.add(new AiTank(50, 0, 10, "yellow", "yellow", "twinCannon", "red"));
 		this.add(new AiTank(50, 50, 10, "yellow", "yellow", "twinCannon", "red"));
@@ -82,16 +87,16 @@ var game = {
 		this.add(new AiTank(-50, 0, 10, "red", "red", "tripleCannon", "yellow"));
 		this.add(new AiTank(-50, 50, 10, "red", "red", "pentaCannon", "yellow"));
 
-		for (var i = 0; i < 50; i++) {
-			var x = Math.random() * 1000 - 500;
-			var y = Math.random() * 1000 - 500;
-			var r = Math.random() * 20 + 5;
+		var range = 1000;
+		var x, y, r;
+		for (var i = 0; i < 10; i++) {
+			x = Math.random() * range - range / 2;
+			y = Math.random() * range - range / 2;
+			r = Math.random() * 20 + 5;
 			this.add(new RegularPolygon(x, y, r, 5, "#06f", "obstacle", r * 5));
-		}
-		for (var i = 0; i < 50; i++) {
-			var x = Math.random() * 1000 - 500;
-			var y = Math.random() * 1000 - 500;
-			var r = Math.random() * 20 + 5;
+			x = Math.random() * range - range / 2;
+			y = Math.random() * range - range / 2;
+			r = Math.random() * 20 + 5;
 			this.add(new RegularPolygon(x, y, r, 4, "orange", "obstacle", r * 5));
 		}
 	},
@@ -143,7 +148,7 @@ var game = {
 		this.objs.forEach(o => o.update(time));
 		this.objs = this.objs.filter(o => {
 			if (o.health <= 0) {
-				this.parti(o);
+				o.dead();
 				return false;
 			}
 			return true;
